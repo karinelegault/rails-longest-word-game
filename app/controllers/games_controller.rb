@@ -7,24 +7,14 @@ class GamesController < ApplicationController
 
   def score
     # The form will be submitted (with POST) to the score action
-    def included?(word)
-      guess.chars.all? { |letter| word.count <= letters.count }
-    end
+    @letters = params[:letters].split
+    @word = params[:word].upcase
+    @valid = valid?(@word, @letters)
+  end
 
-      if included?(word:.upcase)
-        if english_word?(word:)
-          @result = "well done"
-        else
-          @result = "0, not an english word"
-        end
-      else
-        @result = "0, not in the grid"
-      end
+  private
 
-    def english_word?(word)
-      response = open("https://wagon-dictionary.herokuapp.com/#{word}")
-      json = JSON.parse(response.read)
-      return json['found']
-    end
+  def valid?(word, letters)
+    word.chars.all? { |letter| word.count(letter) <= letter.count(letter) }
   end
 end
